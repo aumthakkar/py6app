@@ -101,7 +101,7 @@ jobs:
           --revision main \
           --sync-option CreateNamespace=true \
           --sync-policy manual \
-          --values charts/python-app/values.yaml
+          --values values.yaml
 
           argocd app sync py6app 
           argocd app wait --timeout 120
