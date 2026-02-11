@@ -22,7 +22,7 @@ jobs:
       - name: Obtain shortened commit_sha
         shell: bash
         run: |
-          echo 'COMMIT_ID=${GITHUB_SHA::6}' >> ${GITHUB_ENV}         
+          echo "COMMIT_ID=${GITHUB_SHA::6}" >> ${GITHUB_ENV}       
 
       - name: Build and push
         uses: docker/build-push-action@v6
@@ -34,6 +34,7 @@ jobs:
       commit_id: ${{ env.COMMIT_ID }}
 
   cd:
+    needs: ci
     runs-on: self-hosted
     steps:
       - name: Checkout GitHub repo
