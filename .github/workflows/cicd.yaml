@@ -50,4 +50,4 @@ jobs:
       - name: Commit changes to the GitHub repo
         uses: EndBug/add-and-commit@v9
         with:
-          message: "pushed the image with tag: '${{ needs.outputs.ci.commit_id }}'"
+          message: "pushed the image with tag: '${{ needs.ci.outputs.commit_id }}'"
