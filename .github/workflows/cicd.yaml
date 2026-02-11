@@ -42,7 +42,7 @@ jobs:
 
       - name: Install yq utility 
         run: |
-          sudo apt update && apt install python3-pip -y
+          sudo apt update && sudo apt install python3-pip -y
           pip install yq --break-system-packages
           echo ${{ needs.outputs.ci.commit_id }}
           yq -Yi '.image.tag = "${{ needs.outputs.ci.commit_id }}"' charts/python-app/values.yaml 
