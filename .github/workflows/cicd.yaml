@@ -22,12 +22,19 @@ jobs:
       - name: Obtain shortened commit_sha
         shell: bash
         run: |
-          echo "COMMIT_ID=${GITHUB_SHA::6}" >> ${GITHUB_ENV}       
+          echo "COMMIT_ID=${GITHUB_SHA::6}" >> ${GITHUB_ENV}
+
+      - name: Set up QEMU
+        uses: docker/setup-qemu-action@v3
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
 
       - name: Build and push
         uses: docker/build-push-action@v6
         with:
           push: true
+          platforms: linux/amd64, linux/arm64
           tags: aumthakkar/py6app:${{ env.COMMIT_ID }}
 
     outputs:
@@ -60,7 +67,7 @@ jobs:
           sudo chmod +x /usr/local/bin/argocd
           rm argocd-linux-amd64
 
-      - name: ArgoCD CLI Login and App Sync
+      - name: ArgoCD CLI Login
         run: |
           argocd login argocd-server.argocd \
           --grpc-web \
@@ -68,5 +75,33 @@ jobs:
           --username admin \
           --password DWyJq4CogBFDoqIE
 
+      - name: ArgoCD app create and app sync
+        run: |
+          repo="https://github.com/aumthakkar/py6app.git"
+
+          argocd app list | grep -q ${repo} || argocd repo add ${repo}
+
+          #If app exists, then delete it first to start afresh
+          if argocd app get py6app > /dev/null 2>&1; then
+            echo "Deleting previous version of py6app..."
+            argocd app delete py6app --cascade --yes --wait
+
+            # wait whilst the app gets deleted
+            while argocd app get py6app; do
+              echo "Waiting for arogcd py6app to be deleted..."
+              sleep 2
+            done
+            
+          argocd app create py6app \
+          --destination-namespace dev \
+          --dest-server https://kubernetes.default.svc \
+          --path charts/python-app \
+          --repo ${repo} \
+          --revision main \
+          --sync-option CreateNamespace=true \
+          --sync-policy manual \
+          --values charts/python-app/values.yaml
+
           argocd app sync py6app 
+          argocd app wait --timeout 120
         
