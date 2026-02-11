@@ -94,7 +94,7 @@ jobs:
           fi
 
           argocd app create py6app \
-          --destination-namespace dev \
+          --dest-namespace dev \
           --dest-server https://kubernetes.default.svc \
           --path charts/python-app \
           --repo ${repo} \
