@@ -1,0 +1,12 @@
+site_name: 'Backstage'
+site_description: 'Main documentation for Backstage features and framework APIs'
+repo_url: https://github.com/aumthakkar/py6app
+edit_uri: edit/main/docs
+
+plugins:
+  - techdocs-core
+
+# For sidebar navigation on https://backstage.io/, see `microsite/sidebars.js`
+nav:
+  - Overview:
+      - Getting Started: 'docs/index.md'
